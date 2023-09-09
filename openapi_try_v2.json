@@ -1,0 +1,175 @@
+{
+  "openapi": "3.0.3",
+  "info": {
+    "title": "Swagger  WA Extensions",
+    "description": "This is a WA Extension from CF",
+    "version": "1.0.0"
+  },
+  "servers": [
+    {
+      "url": "https://us-south.functions.appdomain.cloud",
+      "description": "Dallas, USA"
+    }
+  ],
+  "paths": {
+    "/api/v1/web/565716f7-5f98-4fec-b1df-79f3cb2ce9d1/default/sample_scbn_poc.json": {
+      "post": {
+        "parameters": [],
+        "summary": "Get rule info",
+        "description": "Get rule info from WA",
+        "operationId": "getRuleInfo",
+        "requestBody": {
+          "description": "Payload to rule information by means of Cloud Function.",
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "RuleType": {
+                    "type": "string",
+                    "description": "RuleType"
+                  }, 
+                  "Profile_ID": {
+                    "type": "string",
+                    "description": "Profile_ID"
+                  },
+                  "Sender": {
+                    "type": "string",
+                    "description": "Sender"
+                  },
+                  "Receiver": {
+                    "type": "string",
+                    "description": "Receiver"
+                  },
+                  "Message": {
+                    "type": "string",
+                    "description": "Message"
+                  },
+                  "ProcessingFlag1": {
+                    "type": "string",
+                    "description": "ProcessingFlag1"
+                  },
+                  "ProfileID_outbound": {
+                    "type": "string",
+                    "description": "ProfileID_outbound"
+                  },
+                  "Sender_outbound": {
+                    "type": "string",
+                    "description": "Sender_outbound"
+                  },
+                  "Receiver_outbound": {
+                    "type": "string",
+                    "description": "Receiver_outbound"
+                  },
+                  "Message_outbound": {
+                    "type": "string",
+                    "description": "Message_outbound"
+                  },
+                  "  ProcessingFlag1_outbound": {
+                    "type": "string",
+                    "description": "ProcessingFlag1_outbound"
+                  },
+                  "Filename_output ": {
+                    "type": "string",
+                    "description": "Filename_output "
+                  },
+                  " Inbound_ProfileID_both": {
+                    "type": "string",
+                    "description": "Inbound_ProfileID_both"
+                  },
+                   "Outbound_ProfileID_both": {
+                    "type": "string",
+                    "description": "Outbound_ProfileID_both"
+                  },
+                  "Sender_both": {
+                    "type": "string",
+                    "description": "Sender_both"
+                  },
+                  "Receiver_both": {
+                    "type": "string",
+                    "description": "Receiver_both"
+                  },
+                  "Message_both": {
+                    "type": "string",
+                    "description": "Message_both"
+                  },
+                  "ProcessingFlag1_both": {
+                    "type": "string",
+                    "description": "ProcessingFlag1_both"
+                  },
+                   " Filename_both": {
+                    "type": "string",
+                    "description": " Filename_both"
+                  },
+                  "tradingpartner_Basictx": {
+                    "type": "string",
+                    "description": "tradingpartner_Basictx"
+                  },
+                  " Profileid_Basictx": {
+                    "type": "string",
+                    "description": "Profileid_Basictx"
+                  },
+                  "ProcessingFlag1_Basictx ": {
+                    "type": "string",
+                    "description": "ProcessingFlag1_Basictx"
+                  },
+                
+                  "Return_Name" : {
+                    "type": "string",
+                    "description": "sender"
+                  },
+                  
+                  "  tradingpartner_Basictx": {
+                    "type": "string",
+                    "description": "  tradingpartner_Basictx"
+                  },
+
+                  "Profileid_Basictx": {
+                    "type": "string",
+                    "description": "Profileid_Basictx"
+                  },
+
+                  "selector": {
+                    "type": "string",
+                    "description": "selector"
+                  },
+                  " ruleName": {
+                    "type": "string",
+                    "description": " ProcessingFlag1_Basictx"
+                  }, "ProcessingFlag1_Basictx": {
+                    "type": "string",
+                    "description": " ProcessingFlag1_Basictx"
+                  }
+                  
+
+                  
+                }
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "Successful operation.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "rule_message": {
+                      "type": "string"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "405": {
+            "description": "Invalid input."
+          }
+        }
+      }
+    }
+  }
+}
