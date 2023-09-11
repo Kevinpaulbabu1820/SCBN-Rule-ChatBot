@@ -1,18 +1,10 @@
-# SCBN-Rule-ChatBot
-#Please Follow the instructions 
+1.	Create a cloud function.
+2.	Create an openAPI json document.	(Use the link below for how to)
+3.	Go to Watson assistant -> Integrations -> Build custom extension
+4.	Upload your openAPI json file.
+5.	After creating this extension, click Add on it. Review and save.
+6.	Now create an action. And go to from whichever node you want to call the cloud function.
+7.	In the ‘And then’ section at bottom, select use an extension. Choose appropriate options and set the parameters (using session variables, or text, etc).
+8.	Test the action.	(Disable the dialog skill first, worked for me only after that)
 
-Cloud Function 
-1.Create a Cloud Function Action 
-2.Paste the code into the code environment
-3.Save the action 
-4.Save the web action url from the endpoint 
-
-Actions from the 
-1.Upload employee_poc-v4 into action settings 
-2.Save the action 
-Custom Build Extensions From the Integration Settings
-1.Upload the openapi_try_v2.json file  
-2.Save it 
-3.Use extension in the "Assistant then"  in the conversation steps 
-4.Store the variables such as "Sender" to "Sender" .
-
+https://medium.com/@yi.angela/connecting-watson-assistant-to-db2-with-ibm-cloud-function-and-a-custom-extension-89bbe4c6a83b
