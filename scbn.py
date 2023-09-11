@@ -1,6 +1,6 @@
 import sys 
 import json 
-def process_inbound_dict(dict):
+def process_inbound_dict():
     RuleType = dict['RuleType']
     
     if RuleType == 'Inbound':
@@ -78,9 +78,10 @@ def process_inbound_dict(dict):
                     }],
                 }],
             }
-        return {"message": data_inbound}
+        message ="Rule created successfully"
+        return {"rule_message:":message}
 
-def process_outbound_dict(dict):
+def process_outbound_dict():
     RuleType = dict['RuleType']
     Port = 443
     true = 'true'
@@ -91,7 +92,7 @@ def process_outbound_dict(dict):
         Receiver_outbound = dict['Receiver_outbound']
         Message_outbound = dict['Message_outbound']
         ProcessingFlag1_outbound = dict['ProcessingFlag1_outbound']
-        Filename_output = dict['Filename_outbound']
+        Filename_output = dict['Filename_output']
         name1_Outbound = Receiver_outbound + '_Outbound_' \
             + Sender_outbound + '_SFTP_STEP1'
         name2_Outbound = Receiver_outbound + '_Outbound_' \
@@ -180,9 +181,10 @@ def process_outbound_dict(dict):
                     }],
                 }],
             }
-        return {"message": data_outbound}
+        message ="Rule created successfully"
+        return {"rule_message:":message}
     
-def process_both_dict(dict):
+def process_both_dict():
     RuleType = dict['RuleType']
     Port = 443
     true = 'true'
@@ -340,14 +342,16 @@ def process_both_dict(dict):
                     }],
                 }],
             }
-       
-    return {"message": data_both}
+        message ="Rule created successfully"
+        return {"rule_message:":message}
 
-def process_basictx_inbound_dict(dict):
+    
+def process_basictx_inbound_dict():
     RuleType = dict['RuleType']
     Port = 443
     true = 'true'
     false = 'false'
+    message= 'Rule created successfully'
     if RuleType == 'Inbound BasicTx':
         tradingpartner_Basictx = dict["tradingpartner_Basictx"]
         Profileid_Basictx = dict["Profileid_Basictx"]
@@ -445,14 +449,15 @@ def process_basictx_inbound_dict(dict):
                 },
             ],
         }
-      
-    return{"message":data_inboundbasictx}  
+    return {'message':message}
 
-def process_basictx_outbound_dict(dict):
+
+def process_basictx_outbound_dict():
     RuleType = dict['RuleType']
     Port = 443
     true = 'true'
     false = 'false'  
+    message='Rule created successfully'
     if RuleType == 'Outbound BasicTx':
         tradingpartner_Basictx = dict["tradingpartner_Basictx"]
         Profileid_Basictx = dict["Profileid_Basictx"]
@@ -550,32 +555,35 @@ def process_basictx_outbound_dict(dict):
                 },
             ],
         }
-    return{"message":data_outboundbasictx}  
+      
+ 
+        return {"rule_message:":message}
 
-def process_rule_edit(dict):
+def process_rule_edit():
     
     RuleType = dict['RuleType']
       
     if RuleType == "Rule edit" :
-        ruleName = dict["rulename"]
+        ruleName = dict["ruleName"]
         data = "Rule is there " + ruleName
         selector = {"_id": ruleName}
         
-    return{"message":selector}
+    return{"message":ruleName}
  
         
-def process_edit_inbound(dict):
+def process_edit_inbound():
     RuleType = dict['RuleType']
     Port = 443
     true = 'true'
     false = 'false'
+    message = 'Rule Edited Successfully'
     if RuleType == "Edit Inbound Rule":
-        Rulename_Inbound = dict['Rulename']
+        ruleName = dict['ruleName']
         
-        Message= dict['Message_edit_Inbound']
-        ProfileID = dict['ProfileID_edit_Inbound']
-        ProcessingFlag1 = dict['ProcessingFlag1_edit_Inbound']
-        my_list = Rulename_Inbound.split("_")
+        Message= dict['Message']
+        ProfileID = dict['ProfileID']
+        ProcessingFlag1 = dict['ProcessingFlag1']
+        my_list = ruleName.split("_")
         Receiver = my_list[0]
         Sender = my_list[2]
         Return_Name = 'Rule Edit Successfully'
@@ -656,23 +664,24 @@ def process_edit_inbound(dict):
                 },
             ],
         }
-        return {"message": data_edit_inbound}
+        return {"message": message}
 
-def process_edit_outbound(dict):
+def process_edit_outbound():
     RuleType = dict['RuleType']
     Port = 443
     true = 'true'
     false = 'false'
+    message = 'Rule Edited Successfully'
     if RuleType == "Edit Outbound Rule":
-        Rulename_outbound = dict['Rulename']
+        ruleName= dict['ruleName']
         Keyword = dict['Keyword']
-        my_list = Rulename_outbound.split('_')
+        my_list = ruleName.split('_')
         Sender_outbound = my_list[2]
         Receiver_outbound = my_list[0]
-        ProfileID_outbound = dict['ProfileID_edit_Outbound']
-        Message_outbound = dict['Message_edit_Outbound']
-        ProcessingFlag1_outbound = dict['ProcessingFlag1_edit_Outbound']
-        Filename_output = dict['Filename_edit_Outbound']
+        ProfileID_outbound = dict['ProfileID_outbound']
+        Message_outbound = dict['Message_outbound']
+        ProcessingFlag1_outbound = dict['ProcessingFlag1_outbound']
+        Filename_output = dict['Filename_output']
         name1_Outbound = Receiver_outbound + "_Outbound_" + Sender_outbound + "_SFTP_STEP1"
 
         name2_Outbound = Receiver_outbound + "_Outbound_" + Sender_outbound + "_SFTP_STEP2"
@@ -788,28 +797,29 @@ def process_edit_outbound(dict):
             ],
         }
 
-        return {"message": data_edit_outbound}
+        return {"message":message}
 
-def process_edit_both(dict):
+def process_edit_both():
     RuleType = dict['RuleType']
     
     if RuleType == "Edit Both Rule":
-        Rulename_Both = dict["rulename"]
+        ruleName = dict["ruleName"]
         Port = 443
         true = 'true'
         false = 'false'
-        my_list = Rulename_Both.split('_')
+        message = 'Rule Edited Successfully'
+        my_list = ruleName.split('_')
         Sender_both = my_list[2]
         Receiver_both = my_list[0]
 
-        Inbound_ProfileID_both = dict['Inbound_ProfileID_both_edit']
-        Outbound_ProfileID_both = dict['Outbound_ProfileID_edit_Both']
+        Inbound_ProfileID_both = dict['Inbound_ProfileID_both']
+        Outbound_ProfileID_both = dict['Outbound_ProfileID_both']
 
-        Message_both = dict['Message_edit_Both']
-        ProcessingFlag1_both = dict['ProcessingFlag1_edit_Both']
+        Message_both = dict['Message_both']
+        ProcessingFlag1_both = dict['ProcessingFlag1_both']
         ProcessingFlag1_IB = ProcessingFlag1_both + "_IB"
         ProcessingFlag1_OB = ProcessingFlag1_both + "_OB"
-        Filename_both = dict['Filename_both_Edit']
+        Filename_both = dict['Filename_both']
         name1_Inbound_both = Receiver_both + "_INBOUND_" + Sender_both + "_SFTP_STEP1"
         name2_Inbound_both = Receiver_both + "_INBOUND_" + Sender_both + "_SFTP_STEP2"
         name1_Outbound_both = Receiver_both + "_Outbound_" + Sender_both + "_SFTP_STEP1"
@@ -991,24 +1001,25 @@ def process_edit_both(dict):
                 },
             ],
         }
-        return {"message": data_edit_both}
+        return {"message": message}
 
 
-def process_edit_inbound_basictx(dict):
+def process_edit_inbound_basictx():
     RuleType = dict['RuleType']
     Port = 443
     true = 'true'
     false = 'false'
+    message = 'Rule Edited Successfully'
     if RuleType == "Edit Inbound Basictx":
-        Rulename = dict["rulename"]
+        ruleName = dict["ruleName"]
         Keyword = dict['Keyword']
-        tradingpartner_Basictx = dict["tradingpartner_Basictx__Inbound_Edit"]
-        Profileid_Basictx = dict["ProfileID_Basictx_Inbound_Edit"]
-        ProcessingFlag1_Basictx = dict["ProcessingFlag1_Basictx_Inbound_Edit"]
-        name1_BasicTx = "1.0.0_ELUX_INBOUND_RECEIVE_FROM_" + tradingpartner_Basictx + "_SFTP_TO_BASICTX"
-        name2_BasicTx = "1.0.2_ELUX_GENERIC_IN_FLAT_FILE_" + ProcessingFlag1_Basictx + "_BASICTX_TO_CC_FINISH"
+        tradingpartner_Basictx__Inbound_Edit = dict["tradingpartner_Basictx__Inbound_Edit"]
+        ProfileID_Basictx_Inbound_Edit = dict["ProfileID_Basictx_Inbound_Edit"]
+        ProcessingFlag1_Basictx_Inbound_Edit = dict["ProcessingFlag1_Basictx_Inbound_Edit"]
+        name1_BasicTx = "1.0.0_ELUX_INBOUND_RECEIVE_FROM_" + tradingpartner_Basictx__Inbound_Edit + "_SFTP_TO_BASICTX"
+        name2_BasicTx = "1.0.2_ELUX_GENERIC_IN_FLAT_FILE_" + ProcessingFlag1_Basictx_Inbound_Edit + "_BASICTX_TO_CC_FINISH"
         Return_Name = name1_BasicTx + name2_BasicTx + "edited successfully"
-        id_name = "ELUX_INBOUND_RECEIVE_FROM_" + tradingpartner_Basictx
+        id_name = "ELUX_INBOUND_RECEIVE_FROM_" + tradingpartner_Basictx__Inbound_Edit
 
       
         data_edit_inbound_basictx ={
@@ -1032,7 +1043,7 @@ def process_edit_inbound_basictx(dict):
                         {
                             "name": "SourceSubject",
                             "operator": "Contains",
-                            "value": Profileid_Basictx,
+                            "value":  ProfileID_Basictx_Inbound_Edit,
                         }
                     ],
                     "actions": [
@@ -1051,7 +1062,7 @@ def process_edit_inbound_basictx(dict):
                             "assignments": [
                                 {"name": "InflightDirection", "value": "INBOUND"},
                                 {"name": "Action", "value": "TX"},
-                                {"name": "ProcessingFlag1", "value": ProcessingFlag1_Basictx},
+                                {"name": "ProcessingFlag1", "value": ProcessingFlag1_Basictx_Inbound_Edit},
                                 {"name": "Category", "value": "BASIC"},
                                 {"name": "BusinessAlias", "value": "OSC_DEMO"},
                                 {"name": "TargetSystemID", "value": "TX01"},
@@ -1075,7 +1086,7 @@ def process_edit_inbound_basictx(dict):
                         {
                             "name": "ProcessingFlag1",
                             "operator": "=",
-                            "value": ProcessingFlag1_Basictx,
+                            "value": ProcessingFlag1_Basictx_Inbound_Edit,
                         }
                     ],
                     "actions": [
@@ -1087,7 +1098,7 @@ def process_edit_inbound_basictx(dict):
                                 {"name": "CCv1Mode", "value": "TRUE"},
                                 {"name": "CarbonCopyRecipient", "value": "OSC_DEMO"},
                                 {"name": "CCNodesToKeep", "value": "SourceFileName"},
-                                {"name": "ProcessingFlag1", "value": ProcessingFlag1_Basictx},
+                                {"name": "ProcessingFlag1", "value": ProcessingFlag1_Basictx_Inbound_Edit},
                             ],
                         },
                         {
@@ -1100,20 +1111,21 @@ def process_edit_inbound_basictx(dict):
                 },
             ],
         }
-        return {"message": data_edit_inbound_basictx}
+    return {"message": message}
     
-def process_edit_outbound_basictx(dict):
+def process_edit_outbound_basictx():
     RuleType = dict['RuleType']
     
     if RuleType == "Edit Outbound Basictx":
         Port = 443
         true = 'true'
         false = 'false'
-        Rulename = dict["rulename"]
+        message ='Rule Edited Successfully'
+        rulename = dict["rulename"]
         Keyword = dict['Keyword']
-        tradingpartner_Basictx = dict["tradingpartner_Basictx__Inbound_Edit"]
-        Profileid_Basictx = dict["ProfileID_Basictx_Inbound_Edit"]
-        ProcessingFlag1_Basictx = dict["ProcessingFlag1_Basictx_Inbound_Edit"]
+        tradingpartner_Basictx = dict["tradingpartner_Basictx"]
+        Profileid_Basictx = dict["Profileid_Basictx"]
+        ProcessingFlag1_Basictx = dict["ProcessingFlag1_Basictx"]
         name1_BasicTx = "1.0.0_ELUX_INBOUND_RECEIVE_FROM_" + tradingpartner_Basictx + "_SFTP_TO_BASICTX"
         name2_BasicTx = "1.0.2_ELUX_GENERIC_IN_FLAT_FILE_" + ProcessingFlag1_Basictx + "_BASICTX_TO_CC_FINISH"
         Return_Name = name1_BasicTx + name2_BasicTx + "edited successfully"
@@ -1210,18 +1222,18 @@ def process_edit_outbound_basictx(dict):
             ],
         }
 
-        return {"message": data_edit_outbound_basictx}
+    return {"message": message}
   
 
-def process_rule_search(dict):
+def process_rule_search():
     RuleType = dict['RuleType']
     
     if RuleType == "Rule search":
-        ruleName = dict["rulename"]
+        ruleName = dict["ruleName"]
         selector = {"_id": ruleName}
         filename = f"{ruleName}.json"
         print(selector)
-        Return_Name = 'Rule Search Successful'
+        message = 'Rule Search Successful'
 
         data_rule_search = {
             'RuleName': ruleName,
@@ -1230,37 +1242,37 @@ def process_rule_search(dict):
             'Return_Name': Return_Name
         }
 
-        return {"message": data_rule_search}
+        return {"message": message}
     else:
         return {"error": "Invalid RuleType"}
 
-def main(dict):
+def main():
     RuleType = dict['RuleType']
 
     if RuleType == 'Inbound':
-        result = process_inbound_dict(dict)
+        result = process_inbound_dict()
     elif RuleType == 'Outbound':
-        result = process_outbound_dict(dict)
+        result = process_outbound_dict()
     elif RuleType == 'Both':
-        result = process_both_dict(dict)
+        result = process_both_dict()
     elif RuleType == 'Inbound BasicTx':
-        result = process_basictx_inbound_dict(dict)
+        result = process_basictx_inbound_dict()
     elif RuleType == 'Outbound BasicTx':
-        result = process_basictx_outbound_dict(dict)
+        result = process_basictx_outbound_dict()
     elif RuleType == 'Rule edit':
-        result = process_rule_edit(dict)
+        result = process_rule_edit()
     elif RuleType == 'Edit Inbound Rule':
-        result = process_edit_inbound(dict)
+        result = process_edit_inbound()
     elif RuleType == 'Edit Outbound Rule':
-        result = process_edit_outbound(dict)
+        result = process_edit_outbound()
     elif RuleType == 'Edit Both Rule':
-        result = process_edit_both(dict)
+        result = process_edit_both()
     elif RuleType == 'Edit Inbound Basictx':
-        result = process_edit_inbound_basictx(dict)
+        result = process_edit_inbound_basictx()
     elif RuleType == 'Edit Outbound Basictx':
-        result = process_edit_outbound_basictx(dict)
+        result = process_edit_outbound_basictx()
     elif RuleType == 'Rule search':
-        result = process_rule_search(dict)
+        result = process_rule_search()
     else:
         print(f"Invalid RuleType: {RuleType}")
 
