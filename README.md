@@ -1,3 +1,3 @@
-## A chatbot application using Python and Neo4j.
+## A Chatbot application using Python and Neo4j.
 
 Check out Wiki for the documentation 
