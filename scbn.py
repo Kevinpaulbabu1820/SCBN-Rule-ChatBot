@@ -1,1280 +1,321 @@
-import sys 
-import json 
-def process_inbound_dict():
-    RuleType = dict['RuleType']
-    
-    if RuleType == 'Inbound':
-        Port = 443
-        true = 'true'
-        false = 'false'
-        ProfileID = dict['ProfileID']
-        Sender = dict['Sender']
-        Receiver = dict['Receiver']
-        Message = dict['Message']
-        ProcessingFlag1 = dict['ProcessingFlag1']
-        ProcessingFlag1 = dict['ProcessingFlag1']
-        name1_Inbound = Receiver + '_INBOUND_' + Sender + '_SFTP_STEP1'
-        name2_Inbound = Receiver + '_INBOUND_' + Sender + '_SFTP_STEP2'
-        Return_Name = name1_Inbound + '& SFTP_STEP2 created successfully'
-        id_name = Receiver + '_INBOUND_' + Sender
-        data_inbound = {
-            '_id': id_name,
-            'host': 'eubpnsupporttool.sci.local',
-            'port': Port,
-            'outputFolder': 'P:\\RPA\\BPNST',
-            'disableAll': true,
-            'checkForDuplicateRules': true,
-            'skipRules': [],
-            'rules': [{
-                'name': name1_Inbound,
-                'businessAlias': 'OSC_DEMO',
-                'ruleBusinessAlias': 'OSC_DEMO',
-                'ruleSet': 'BPN_ReceiveSFTPEval',
-                'enabled': true,
-                'default': false,
-                'direction': 'INBOUND',
-                'conditions': [{'name': 'SourceSubject',
-                               'operator': 'Contains',
-                               'value': ProfileID}],
-                'actions': [{
-                    'name': 'TrackIt',
-                    'businessProcessName': 'BPN_ReceiveSFTPTrack',
-                    'enabled': true,
-                    'assignments': [{'name': 'InflightDirection',
-                                    'value': 'INBOUND'}],
-                    }, {
-                    'name': 'SendToPod',
-                    'businessProcessName': 'BPN_SendPod',
-                    'enabled': true,
-                    'assignments': [
-                        {'name': 'InflightDirection', 'value': 'INBOUND'
-                         },
-                        {'name': 'SourceSenderID', 'value': Sender},
-                        {'name': 'Action', 'value': 'ROUTER'},
-                        {'name': 'ProcessingFlag1',
-                         'value': ProcessingFlag1},
-                        {'name': 'MessageType', 'value': Message},
-                        {'name': 'BusinessAlias', 'value': 'OSC_DEMO'},
-                        {'name': 'TargetSystemID', 'value': 'TX01'},
-                        {'name': 'SourceReceiverID',
-                         'value': Receiver},
-                        ],
-                    }],
-                }, {
-                'name': name2_Inbound,
-                'businessAlias': 'OSC_DEMO',
-                'ruleBusinessAlias': 'OSC_DEMO',
-                'ruleSet': 'BPN_RouterEval',
-                'enabled': true,
-                'default': false,
-                'direction': '',
-                'conditions': [{'name': 'Receiver', 'operator': '=',
-                               'value': Receiver}],
-                'actions': [{
-                    'name': 'SendToPod',
-                    'businessProcessName': 'BPN_Finish',
-                    'enabled': true,
-                    'assignments': [],
-                    }],
-                }],
-            }
-        message ="Rule created successfully"
-        return {"rule_message:":message}
-
-def process_outbound_dict():
-    RuleType = dict['RuleType']
-    Port = 443
-    true = 'true'
-    false = 'false'
-    if RuleType == 'Outbound':
-        ProfileID_outbound = dict['ProfileID_outbound']
-        Sender_outbound = dict['Sender_outbound']
-        Receiver_outbound = dict['Receiver_outbound']
-        Message_outbound = dict['Message_outbound']
-        ProcessingFlag1_outbound = dict['ProcessingFlag1_outbound']
-        Filename_output = dict['Filename_output']
-        name1_Outbound = Receiver_outbound + '_Outbound_' \
-            + Sender_outbound + '_SFTP_STEP1'
-        name2_Outbound = Receiver_outbound + '_Outbound_' \
-            + Sender_outbound + '_SFTP_STEP1'
-        id_name = Receiver_outbound + '_Outbound_' + Sender_outbound
-        # data = ProfileID_outbound + Sender_outbound + Receiver_outbound + Message_outbound + ProcessingFlag1_outbound + Filename_output
-        Return_Name = name1_Outbound + '& SFTP_STEP2 created successfully'
-        data_outbound = {
-            '_id': id_name,
-            'host': 'eubpnsupporttool.sci.local',
-            'port': Port,
-            'outputFolder': 'P:\\RPA\\BPNST',
-            'disableAll': true,
-            'checkForDuplicateRules': true,
-            'skipRules': [],
-            'rules': [{
-                'name': name1_Outbound,
-                'businessAlias': 'OSC_DEMO',
-                'ruleBusinessAlias': 'OSC_DEMO',
-                'ruleSet': 'BPN_ReceiveSFTPEval',
-                'enabled': true,
-                'default': false,
-                'direction': 'OUTBOUND',
-                'conditions': [{'name': 'SourceFileName',
-                               'operator': 'StartsWith',
-                               'value': Filename_output},
-                               {'name': 'SourceSubject',
-                               'operator': 'Contains',
-                               'value': ProfileID_outbound}],
-                'actions': [{
-                    'name': 'TrackIt',
-                    'businessProcessName': 'BPN_ReceiveSFTPTrack',
-                    'enabled': true,
-                    'assignments': [{'name': 'InflightDirection',
-                                    'value': 'OUTBOUND'}],
-                    }, {
-                    'name': 'SendToPod',
-                    'businessProcessName': 'BPN_SendPod',
-                    'enabled': true,
-                    'assignments': [
-                        {'name': 'InflightDirection',
-                         'value': 'OUTBOUND'},
-                        {'name': 'SourceSenderID',
-                         'value': Receiver_outbound},
-                        {'name': 'Action', 'value': 'ROUTER'},
-                        {'name': 'ProcessingFlag1',
-                         'value': ProcessingFlag1_outbound},
-                        {'name': 'MessageType',
-                         'value': Message_outbound},
-                        {'name': 'BusinessAlias', 'value': 'OSC_DEMO'},
-                        {'name': 'TargetSystemID', 'value': 'TX01'},
-                        {'name': 'SourceReceiverID',
-                         'value': Sender_outbound},
-                        ],
-                    }],
-                }, {
-                'name': name2_Outbound,
-                'businessAlias': 'OSC_DEMO',
-                'ruleBusinessAlias': 'OSC_DEMO',
-                'ruleSet': 'BPN_RouterEval',
-                'enabled': true,
-                'default': false,
-                'direction': 'OUTBOUND',
-                'conditions': [{'name': 'ProcessingFlag1',
-                               'operator': '=',
-                               'value': ProcessingFlag1_outbound}],
-                'actions': [{
-                    'name': 'Action2',
-                    'businessProcessName': 'BPN_Finish',
-                    'enabled': false,
-                    'assignments': [],
-                    }, {
-                    'name': 'SendToPod',
-                    'businessProcessName': 'BPN_SendPod',
-                    'enabled': true,
-                    'assignments': [
-                        {'name': 'Category', 'value': 'SFTP'},
-                        {'name': 'Action', 'value': 'SEND'},
-                        {'name': 'TargetSystemID', 'value': 'PRO01'},
-                        {'name': 'ProtocolProfileID',
-                         'value': ProfileID_outbound},
-                        {'name': 'InflightDirection',
-                         'value': 'OUTBOUND'},
-                        {'name': 'BusinessAlias', 'value': 'OSC_DEMO'},
-                        ],
-                    }],
-                }],
-            }
-        message ="Rule created successfully"
-        return {"rule_message:":message}
-    
-def process_both_dict():
-    RuleType = dict['RuleType']
-    Port = 443
-    true = 'true'
-    false = 'false'
-    if RuleType == 'Both':
-        Inbound_ProfileID_both = dict['Inbound_ProfileID_both']
-        Outbound_ProfileID_both = dict['Outbound_ProfileID_both']
-        Sender_both = dict['Sender_both']
-        Receiver_both = dict['Receiver_both']
-        Message_both = dict['Message_both']
-        ProcessingFlag1_both = dict['ProcessingFlag1_both']
-        ProcessingFlag1_IB = ProcessingFlag1_both + "_IB"
-        ProcessingFlag1_OB = ProcessingFlag1_both + "_OB"
-        Filename_both = dict['Filename_both']
-        name1_Inbound_both = Receiver_both + '_INBOUND_' + Sender_both \
-            + '_SFTP_STEP1'
-        name2_Inbound_both = Receiver_both + '_INBOUND_' + Sender_both \
-            + '_SFTP_STEP2'
-        name1_Outbound_both = Receiver_both + '_Outbound_' \
-            + Sender_both + '_SFTP_STEP1'
-        name2_Outbound_both = Receiver_both + '_Outbound_' \
-            + Sender_both + '_SFTP_STEP1'
-        id_name =  Receiver_both + '_Both_' + Sender_both
-        Return_Name = Receiver_both + 'both' + Sender_both +  'SFTP_STEP1,SFTP_STEP2 created successfully'
-        data_both = {
-            '_id': id_name,
-            'host': 'eubpnsupporttool.sci.local',
-            'port': Port,
-            'outputFolder': 'P:\\RPA\\BPNST',
-            'disableAll': true,
-            'checkForDuplicateRules': true,
-            'skipRules': [],
-            'rules': [{
-                'name': name1_Inbound_both,
-                'businessAlias': 'OSC_DEMO',
-                'ruleBusinessAlias': 'OSC_DEMO',
-                'ruleSet': 'BPN_ReceiveSFTPEval',
-                'enabled': true,
-                'default': false,
-                'direction': 'INBOUND',
-                'conditions': [{'name': 'SourceSubject',
-                               'operator': 'Contains',
-                               'value': Inbound_ProfileID_both}],
-                'actions': [{
-                    'name': 'TrackIt',
-                    'businessProcessName': 'BPN_ReceiveSFTPTrack',
-                    'enabled': true,
-                    'assignments': [{'name': 'InflightDirection',
-                                    'value': 'INBOUND'}],
-                    }, {
-                    'name': 'SendToPod',
-                    'businessProcessName': 'BPN_SendPod',
-                    'enabled': true,
-                    'assignments': [
-                        {'name': 'InflightDirection', 'value': 'INBOUND'
-                         },
-                        {'name': 'SourceSenderID',
-                         'value': Sender_both},
-                        {'name': 'Action', 'value': 'ROUTER'},
-                        {'name': 'ProcessingFlag1',
-                         'value': ProcessingFlag1_IB},
-                        {'name': 'MessageType', 'value': Message_both},
-                        {'name': 'BusinessAlias', 'value': 'OSC_DEMO'},
-                        {'name': 'TargetSystemID', 'value': 'TX01'},
-                        {'name': 'SourceReceiverID',
-                         'value': Receiver_both},
-                        ],
-                    }],
-                }, {
-                'name': name2_Inbound_both,
-                'businessAlias': 'OSC_DEMO',
-                'ruleBusinessAlias': 'OSC_DEMO',
-                'ruleSet': 'BPN_RouterEval',
-                'enabled': true,
-                'default': false,
-                'direction': '',
-                'conditions': [{'name': 'ProcessingFlag1',
-                               'operator': '=',
-                               'value': ProcessingFlag1_IB}],
-                'actions': [{
-                    'name': 'SendToPod',
-                    'businessProcessName': 'BPN_Finish',
-                    'enabled': true,
-                    'assignments': [],
-                    }],
-                }, {
-                'name': name1_Outbound_both,
-                'businessAlias': 'OSC_DEMO',
-                'ruleBusinessAlias': 'OSC_DEMO',
-                'ruleSet': 'BPN_ReceiveSFTPEval',
-                'enabled': true,
-                'default': false,
-                'direction': 'OUTBOUND',
-                'conditions': [{'name': 'SourceFileName',
-                               'operator': 'StartsWith',
-                               'value': Filename_both},
-                               {'name': 'SourceSubject',
-                               'operator': 'Contains',
-                               'value': Outbound_ProfileID_both}],
-                'actions': [{
-                    'name': 'TrackIt',
-                    'businessProcessName': 'BPN_ReceiveSFTPTrack',
-                    'enabled': true,
-                    'assignments': [{'name': 'InflightDirection',
-                                    'value': 'OUTBOUND'}],
-                    }, {
-                    'name': 'SendToPod',
-                    'businessProcessName': 'BPN_SendPod',
-                    'enabled': true,
-                    'assignments': [
-                        {'name': 'InflightDirection',
-                         'value': 'OUTBOUND'},
-                        {'name': 'SourceSenderID',
-                         'value': Sender_both},
-                        {'name': 'Action', 'value': 'ROUTER'},
-                        {'name': 'ProcessingFlag1',
-                         'value': ProcessingFlag1_OB},
-                        {'name': 'MessageType', 'value': Message_both},
-                        {'name': 'BusinessAlias', 'value': 'OSC_DEMO'},
-                        {'name': 'TargetSystemID', 'value': 'TX01'},
-                        {'name': 'SourceReceiverID',
-                         'value': Receiver_both},
-                        ],
-                    }],
-                }, {
-                'name': name2_Outbound_both,
-                'businessAlias': 'OSC_DEMO',
-                'ruleBusinessAlias': 'OSC_DEMO',
-                'ruleSet': 'BPN_RouterEval',
-                'enabled': true,
-                'default': false,
-                'direction': 'OUTBOUND',
-                'conditions': [{'name': 'ProcessingFlag1',
-                               'operator': '=', 'value': 'ProcessingFlag1_both'
-                               }],
-                'actions': [{
-                    'name': 'Action2',
-                    'businessProcessName': 'BPN_Finish',
-                    'enabled': false,
-                    'assignments': [],
-                    }, {
-                    'name': 'SendToPod',
-                    'businessProcessName': 'BPN_SendPod',
-                    'enabled': true,
-                    'assignments': [
-                        {'name': 'Category', 'value': 'SFTP'},
-                        {'name': 'Action', 'value': 'SEND'},
-                        {'name': 'TargetSystemID', 'value': 'PRO01'},
-                        {'name': 'ProtocolProfileID',
-                         'value': Outbound_ProfileID_both},
-                        {'name': 'InflightDirection',
-                         'value': 'OUTBOUND'},
-                        {'name': 'BusinessAlias', 'value': 'OSC_DEMO'},
-                        ],
-                    }],
-                }],
-            }
-        message ="Rule created successfully"
-        return {"rule_message:":message}
-
-    
-def process_basictx_inbound_dict():
-    RuleType = dict['RuleType']
-    Port = 443
-    true = 'true'
-    false = 'false'
-    message= 'Rule created successfully'
-    if RuleType == 'Inbound BasicTx':
-        tradingpartner_Basictx = dict["tradingpartner_Basictx"]
-        Profileid_Basictx = dict["Profileid_Basictx"]
-        ProcessingFlag1_Basictx = dict["ProcessingFlag1_Basictx"]
-        name1_BasicTx = "1.0.0_ELUX_INBOUND_RECEIVE_FROM_" + tradingpartner_Basictx + "_SFTP_TO_BASICTX"
-        name2_BasicTx = "1.0.2_ELUX_GENERIC_IN_FLAT_FILE_" + ProcessingFlag1_Basictx + "_BASICTX_TO_CC_FINISH"
-        Return_Name = name1_BasicTx + name2_BasicTx + "created successfully"
-        id_name = "ELUX_INBOUND_RECEIVE_FROM_" + tradingpartner_Basictx
-        data_inboundbasictx = {
-            "_id": id_name,
-            "host": "nabpnsupporttool.comm1.sci.local",
-            "port": Port,
-            "outputFolder": "P:\\RPA\\BPNST",
-            "disableAll": true,
-            "checkForDuplicateRules": true,
-            "skipRules": [],
-            "rules": [
-                {
-                    "name": name1_BasicTx,
-                    "businessAlias": "OSC_DEMO",
-                    "ruleBusinessAlias": "OSC_DEMO",
-                    "ruleSet": "BPN_ReceiveSFTPEval",
-                    "enabled": true,
-                    "default": false,
-                    "direction": "INBOUND",
-                    "conditions": [
-                        {
-                            "name": "SourceSubject",
-                            "operator": "Contains",
-                            "value": Profileid_Basictx,
-                        }
-                    ],
-                    "actions": [
-                        {
-                            "name": "TrackIt",
-                            "businessProcessName": "BPN_ReceiveSFTPTrack",
-                            "enabled": true,
-                            "assignments": [
-                                {"name": "InflightDirection", "value": "INBOUND"}
-                            ],
-                        },
-                        {
-                            "name": "SendToPod",
-                            "businessProcessName": "BPN_SendPod",
-                            "enabled": true,
-                            "assignments": [
-                                {"name": "InflightDirection", "value": "INBOUND"},
-                                {"name": "Action", "value": "TX"},
-                                {"name": "ProcessingFlag1", "value": ProcessingFlag1_Basictx},
-                                {"name": "Category", "value": "BASIC"},
-                                {"name": "BusinessAlias", "value": "OSC_DEMO"},
-                                {"name": "TargetSystemID", "value": "TX01"},
-                                {
-                                    "name": "MapName",
-                                    "value": "ELUX_DUMMY_PASSTHRU_Fortras100_inhouse",
-                                },
-                            ],
-                        },
-                    ],
-                },
-                {
-                    "name": name2_BasicTx,
-                    "businessAlias": "OSC_DEMO",
-                    "ruleBusinessAlias": "OSC_DEMO",
-                    "ruleSet": "BPN_BasicTranslationEval",
-                    "enabled": true,
-                    "default": false,
-                    "direction": "",
-                    "conditions": [
-                        {
-                            "name": "ProcessingFlag1",
-                            "operator": "=",
-                            "value": ProcessingFlag1_Basictx,
-                        }
-                    ],
-                    "actions": [
-                        {
-                            "name": "Action2",
-                            "businessProcessName": "BPN_CarbonCopy",
-                            "enabled": true,
-                            "assignments": [
-                                {"name": "CCv1Mode", "value": "TRUE"},
-                                {"name": "CarbonCopyRecipient", "value": "OSC_DEMO"},
-                                {"name": "CCNodesToKeep", "value": "SourceFileName"},
-                                {"name": "ProcessingFlag1", "value": ProcessingFlag1_Basictx},
-                            ],
-                        },
-                        {
-                            "name": "Action3",
-                            "businessProcessName": "BPN_Finish",
-                            "enabled": true,
-                            "assignments": [],
-                        },
-                    ],
-                },
-            ],
-        }
-    return {'message':message}
+from neo4j import GraphDatabase
 
 
-def process_basictx_outbound_dict():
-    RuleType = dict['RuleType']
-    Port = 443
-    true = 'true'
-    false = 'false'  
-    message='Rule created successfully'
-    if RuleType == 'Outbound BasicTx':
-        tradingpartner_Basictx = dict["tradingpartner_Basictx"]
-        Profileid_Basictx = dict["Profileid_Basictx"]
-        ProcessingFlag1_Basictx = dict["ProcessingFlag1_Basictx"]
-        name1_BasicTx = "1.0.0_ELUX_INBOUND_RECEIVE_FROM_" + tradingpartner_Basictx + "_SFTP_TO_BASICTX"
-        name2_BasicTx = "1.0.2_ELUX_GENERIC_IN_FLAT_FILE_" + ProcessingFlag1_Basictx + "_BASICTX_TO_CC_FINISH"
-        Return_Name = name1_BasicTx + name2_BasicTx + "created successfully"
-        id_name = "ELUX_INBOUND_RECEIVE_FROM_" + tradingpartner_Basictx
-        data_outboundbasictx = {
-            "_id": id_name,
-            "host": "nabpnsupporttool.comm1.sci.local",
-            "port": 443,
-            "outputFolder": "P:\\RPA\\BPNST",
-            "disableAll": true,
-            "checkForDuplicateRules": true,
-            "skipRules": [],
-            "rules": [
-                {
-                    "name": name1_BasicTx,
-                    "businessAlias": "OSC_DEMO",
-                    "ruleBusinessAlias": "OSC_DEMO",
-                    "ruleSet": "BPN_ReceiveSFTPEval",
-                    "enabled": true,
-                    "default": false,
-                    "direction": "INBOUND",
-                    "conditions": [
-                        {
-                            "name": "SourceSubject",
-                            "operator": "Contains",
-                            "value": Profileid_Basictx,
-                        }
-                    ],
-                    "actions": [
-                        {
-                            "name": "TrackIt",
-                            "businessProcessName": "BPN_ReceiveSFTPTrack",
-                            "enabled": true,
-                            "assignments": [
-                                {"name": "InflightDirection", "value": "INBOUND"}
-                            ],
-                        },
-                        {
-                            "name": "SendToPod",
-                            "businessProcessName": "BPN_SendPod",
-                            "enabled": true,
-                            "assignments": [
-                                {"name": "InflightDirection", "value": "INBOUND"},
-                                {"name": "Action", "value": "TX"},
-                                {"name": "ProcessingFlag1", "value": ProcessingFlag1_Basictx},
-                                {"name": "Category", "value": "BASIC"},
-                                {"name": "BusinessAlias", "value": "OSC_DEMO"},
-                                {"name": "TargetSystemID", "value": "TX01"},
-                                {
-                                    "name": "MapName",
-                                    "value": "ELUX_DUMMY_PASSTHRU_Fortras100_inhouse",
-                                },
-                            ],
-                        },
-                    ],
-                },
-                {
-                    "name": name2_BasicTx,
-                    "businessAlias": "OSC_DEMO",
-                    "ruleBusinessAlias": "OSC_DEMO",
-                    "ruleSet": "BPN_BasicTranslationEval",
-                    "enabled": true,
-                    "default": false,
-                    "direction": "",
-                    "conditions": [
-                        {
-                            "name": "ProcessingFlag1",
-                            "operator": "=",
-                            "value": ProcessingFlag1_Basictx,
-                        }
-                    ],
-                    "actions": [
-                        {
-                            "name": "Action2",
-                            "businessProcessName": "BPN_CarbonCopy",
-                            "enabled": true,
-                            "assignments": [
-                                {"name": "CCv1Mode", "value": "TRUE"},
-                                {"name": "CarbonCopyRecipient", "value": "OSC_DEMO"},
-                                {"name": "CCNodesToKeep", "value": "SourceFileName"},
-                                {"name": "ProcessingFlag1", "value": ProcessingFlag1_Basictx},
-                            ],
-                        },
-                        {
-                            "name": "Action3",
-                            "businessProcessName": "BPN_Finish",
-                            "enabled": true,
-                            "assignments": [],
-                        },
-                    ],
-                },
-            ],
-        }
-      
- 
-        return {"rule_message:":message}
+class Neo4jConnector:
+    def __init__(self, uri, user, password):
+        self._driver = GraphDatabase.driver(uri, auth=(user, password))
 
-def process_rule_edit():
-    
-    RuleType = dict['RuleType']
-      
-    if RuleType == "Rule edit" :
-        ruleName = dict["ruleName"]
-        data = "Rule is there " + ruleName
-        selector = {"_id": ruleName}
-        
-    return{"message":ruleName}
- 
-        
-def process_edit_inbound():
-    RuleType = dict['RuleType']
-    Port = 443
-    true = 'true'
-    false = 'false'
-    message = 'Rule Edited Successfully'
-    if RuleType == "Edit Inbound Rule":
-        ruleName = dict['ruleName']
-        
-        Message= dict['Message']
-        ProfileID = dict['ProfileID']
-        ProcessingFlag1 = dict['ProcessingFlag1']
-        my_list = ruleName.split("_")
-        Receiver = my_list[0]
-        Sender = my_list[2]
-        Return_Name = 'Rule Edit Successfully'
+    def close(self):
+        self._driver.close()
 
-        name1_Inbound = Receiver + "_INBOUND_" + Sender + "_SFTP_STEP1"
-        name2_Inbound = Receiver + "_INBOUND_" + Sender + "_SFTP_STEP2"
-        id_name = Receiver + "_INBOUND_" + Sender
-        Return_Name = 'Rule Edit Successfully'
-        data_edit_inbound = {
-            "_id": id_name,
-            "host": "eubpnsupporttool.sci.local",
-            "port": Port,
-            "outputFolder": "P:\\RPA\\BPNST",
-            "disableAll": true,
-            "checkForDuplicateRules": true,
-            "skipRules": [],
-            "rules": [
-                {
-                    "name": name1_Inbound,
-                    "businessAlias": "OSC_DEMO",
-                    "ruleBusinessAlias": "OSC_DEMO",
-                    "ruleSet": "BPN_ReceiveSFTPEval",
-                    "enabled": true,
-                    "default": false,
-                    "direction": "INBOUND",
-                    "conditions": [
-                        {
-                            "name": "SourceSubject",
-                            "operator": "Contains",
-                            "value": ProfileID,
-                        }
-                    ],
-                    "actions": [
-                        {
-                            "name": "TrackIt",
-                            "businessProcessName": "BPN_ReceiveSFTPTrack",
-                            "enabled": true,
-                            "assignments": [
-                                {"name": "InflightDirection", "value": "INBOUND"}
-                            ],
-                        },
-                        {
-                            "name": "SendToPod",
-                            "businessProcessName": "BPN_SendPod",
-                            "enabled": true,
-                            "assignments": [
-                                {"name": "InflightDirection", "value": "INBOUND"},
-                                {"name": "SourceSenderID", "value": Sender},
-                                {"name": "Action", "value": "ROUTER"},
-                                {"name": "ProcessingFlag1", "value": ProcessingFlag1},
-                                {"name": "MessageType", "value": Message},
-                                {"name": "BusinessAlias", "value": "OSC_DEMO"},
-                                {"name": "TargetSystemID", "value": "TX01"},
-                                {"name": "SourceReceiverID", "value": Receiver},
-                            ],
-                        },
-                    ],
-                },
-                {
-                    "name": name2_Inbound,
-                    "businessAlias": "OSC_DEMO",
-                    "ruleBusinessAlias": "OSC_DEMO",
-                    "ruleSet": "BPN_RouterEval",
-                    "enabled": true,
-                    "default": false,
-                    "direction": "",
-                    "conditions": [
-                        {"name": "Receiver", "operator": "=", "value": Receiver}
-                    ],
-                    "actions": [
-                        {
-                            "name": "SendToPod",
-                            "businessProcessName": "BPN_Finish",
-                            "enabled": true,
-                            "assignments": [],
-                        }
-                    ],
-                },
-            ],
-        }
-        return {"message": message}
-
-def process_edit_outbound():
-    RuleType = dict['RuleType']
-    Port = 443
-    true = 'true'
-    false = 'false'
-    message = 'Rule Edited Successfully'
-    if RuleType == "Edit Outbound Rule":
-        ruleName= dict['ruleName']
-        Keyword = dict['Keyword']
-        my_list = ruleName.split('_')
-        Sender_outbound = my_list[2]
-        Receiver_outbound = my_list[0]
-        ProfileID_outbound = dict['ProfileID_outbound']
-        Message_outbound = dict['Message_outbound']
-        ProcessingFlag1_outbound = dict['ProcessingFlag1_outbound']
-        Filename_output = dict['Filename_output']
-        name1_Outbound = Receiver_outbound + "_Outbound_" + Sender_outbound + "_SFTP_STEP1"
-
-        name2_Outbound = Receiver_outbound + "_Outbound_" + Sender_outbound + "_SFTP_STEP2"
-
-        id_name = Receiver_outbound + "_Outbound_" + Sender_outbound
-        data = id_name
-        Return_Name = 'Rule Edit Successfully'
-
-        data_edit_outbound  = {
-            "_id": id_name,
-            "host": "eubpnsupporttool.sci.local",
-            "port": Port,
-            "outputFolder": "P:\\RPA\\BPNST",
-            "disableAll": true,
-            "checkForDuplicateRules": true,
-            "skipRules": [],
-            "rules": [
-                {
-                    "name": name1_Outbound,
-                    "businessAlias": "OSC_DEMO",
-                    "ruleBusinessAlias": "OSC_DEMO",
-                    "ruleSet": "BPN_ReceiveSFTPEval",
-                    "enabled": true,
-                    "default": false,
-                    "direction": "OUTBOUND",
-                    "conditions": [
-                        {
-                            "name": "SourceFileName",
-                            "operator": "StartsWith",
-                            "value": Filename_output,
-                        },
-                        {
-                            "name": "SourceSubject",
-                            "operator": "Contains",
-                            "value": ProfileID_outbound,
-                        },
-                    ],
-                    "actions": [
-                        {
-                            "name": "TrackIt",
-                            "businessProcessName": "BPN_ReceiveSFTPTrack",
-                            "enabled": true,
-                            "assignments": [
-                                {"name": "InflightDirection", "value": "OUTBOUND"}
-                            ],
-                        },
-                        {
-                            "name": "SendToPod",
-                            "businessProcessName": "BPN_SendPod",
-                            "enabled": true,
-                            "assignments": [
-                                {"name": "InflightDirection", "value": "OUTBOUND"},
-                                {
-                                    "name": "SourceSenderID",
-                                    "value": Receiver_outbound,
-                                },
-                                {"name": "Action", "value": "ROUTER"},
-                                {
-                                    "name": "ProcessingFlag1",
-                                    "value": ProcessingFlag1_outbound,
-                                },
-                                {"name": "MessageType", "value": Message_outbound},
-                                {"name": "BusinessAlias", "value": "OSC_DEMO"},
-                                {"name": "TargetSystemID", "value": "TX01"},
-                                {
-                                    "name": "SourceReceiverID",
-                                    "value": Sender_outbound,
-                                },
-                            ],
-                        },
-                    ],
-                },
-                {
-                    "name": name2_Outbound,
-                    "businessAlias": "OSC_DEMO",
-                    "ruleBusinessAlias": "OSC_DEMO",
-                    "ruleSet": "BPN_RouterEval",
-                    "enabled": true,
-                    "default": false,
-                    "direction": "OUTBOUND",
-                    "conditions": [
-                        {
-                            "name": "ProcessingFlag1",
-                            "operator": "=",
-                            "value": ProcessingFlag1_outbound,
-                        }
-                    ],
-                    "actions": [
-                        {
-                            "name": "Action2",
-                            "businessProcessName": "BPN_Finish",
-                            "enabled": false,
-                            "assignments": [],
-                        },
-                        {
-                            "name": "SendToPod",
-                            "businessProcessName": "BPN_SendPod",
-                            "enabled": true,
-                            "assignments": [
-                                {"name": "Category", "value": "SFTP"},
-                                {"name": "Action", "value": "SEND"},
-                                {"name": "TargetSystemID", "value": "PRO01"},
-                                {
-                                    "name": "ProtocolProfileID",
-                                    "value": ProfileID_outbound,
-                                },
-                                {"name": "InflightDirection", "value": "OUTBOUND"},
-                                {"name": "BusinessAlias", "value": "OSC_DEMO"},
-                            ],
-                        },
-                    ],
-                },
-            ],
-        }
-
-        return {"message":message}
-
-def process_edit_both():
-    RuleType = dict['RuleType']
-    
-    if RuleType == "Edit Both Rule":
-        ruleName = dict["ruleName"]
-        Port = 443
-        true = 'true'
-        false = 'false'
-        message = 'Rule Edited Successfully'
-        my_list = ruleName.split('_')
-        Sender_both = my_list[2]
-        Receiver_both = my_list[0]
-
-        Inbound_ProfileID_both = dict['Inbound_ProfileID_both']
-        Outbound_ProfileID_both = dict['Outbound_ProfileID_both']
-
-        Message_both = dict['Message_both']
-        ProcessingFlag1_both = dict['ProcessingFlag1_both']
-        ProcessingFlag1_IB = ProcessingFlag1_both + "_IB"
-        ProcessingFlag1_OB = ProcessingFlag1_both + "_OB"
-        Filename_both = dict['Filename_both']
-        name1_Inbound_both = Receiver_both + "_INBOUND_" + Sender_both + "_SFTP_STEP1"
-        name2_Inbound_both = Receiver_both + "_INBOUND_" + Sender_both + "_SFTP_STEP2"
-        name1_Outbound_both = Receiver_both + "_Outbound_" + Sender_both + "_SFTP_STEP1"
-        name2_Outbound_both = Receiver_both + "_Outbound_" + Sender_both + "_SFTP_STEP1"
-        id_name = Sender_both + "_Both_" + Receiver_both
-        Return_Name = 'Rule Edit Successfully'
-
-        data_edit_both  = {
-            "_id": id_name,
-            "host": "eubpnsupporttool.sci.local",
-            "port": Port,
-            "outputFolder": "P:\\RPA\\BPNST",
-            "disableAll": true,
-            "checkForDuplicateRules": true,
-            "skipRules": [],
-            "rules": [
-                {
-                    "name": name1_Inbound_both,
-                    "businessAlias": "OSC_DEMO",
-                    "ruleBusinessAlias": "OSC_DEMO",
-                    "ruleSet": "BPN_ReceiveSFTPEval",
-                    "enabled": true,
-                    "default": false,
-                    "direction": "INBOUND",
-                    "conditions": [
-                        {
-                            "name": "SourceSubject",
-                            "operator": "Contains",
-                            "value": Inbound_ProfileID_both,
-                        }
-                    ],
-                    "actions": [
-                        {
-                            "name": "TrackIt",
-                            "businessProcessName": "BPN_ReceiveSFTPTrack",
-                            "enabled": true,
-                            "assignments": [
-                                {"name": "InflightDirection", "value": "INBOUND"}
-                            ],
-                        },
-                        {
-                            "name": "SendToPod",
-                            "businessProcessName": "BPN_SendPod",
-                            "enabled": true,
-                            "assignments": [
-                                {"name": "InflightDirection", "value": "INBOUND"},
-                                {"name": "SourceSenderID", "value": Sender_both},
-                                {"name": "Action", "value": "ROUTER"},
-                                {
-                                    "name": "ProcessingFlag1",
-                                    "value": ProcessingFlag1_IB,
-                                },
-                                {"name": "MessageType", "value": Message_both},
-                                {"name": "BusinessAlias", "value": "OSC_DEMO"},
-                                {"name": "TargetSystemID", "value": "TX01"},
-                                {
-                                    "name": "SourceReceiverID",
-                                    "value": Receiver_both,
-                                },
-                            ],
-                        },
-                    ],
-                },
-                {
-                    "name": name2_Inbound_both,
-                    "businessAlias": "OSC_DEMO",
-                    "ruleBusinessAlias": "OSC_DEMO",
-                    "ruleSet": "BPN_RouterEval",
-                    "enabled": true,
-                    "default": false,
-                    "direction": "",
-                    "conditions": [
-                        {
-                            "name": "ProcessingFlag1",
-                            "operator": "=",
-                            "value": ProcessingFlag1_IB,
-                        }
-                    ],
-                    "actions": [
-                        {
-                            "name": "SendToPod",
-                            "businessProcessName": "BPN_Finish",
-                            "enabled": true,
-                            "assignments": [],
-                        }
-                    ],
-                },
-                {
-                    "name": name1_Outbound_both,
-                    "businessAlias": "OSC_DEMO",
-                    "ruleBusinessAlias": "OSC_DEMO",
-                    "ruleSet": "BPN_ReceiveSFTPEval",
-                    "enabled": true,
-                    "default": false,
-                    "direction": "OUTBOUND",
-                    "conditions": [
-                        {
-                            "name": "SourceFileName",
-                            "operator": "StartsWith",
-                            "value": Filename_both,
-                        },
-                        {
-                            "name": "SourceSubject",
-                            "operator": "Contains",
-                            "value": Outbound_ProfileID_both,
-                        },
-                    ],
-                    "actions": [
-                        {
-                            "name": "TrackIt",
-                            "businessProcessName": "BPN_ReceiveSFTPTrack",
-                            "enabled": true,
-                            "assignments": [
-                                {"name": "InflightDirection", "value": "OUTBOUND"}
-                            ],
-                        },
-                        {
-                            "name": "SendToPod",
-                            "businessProcessName": "BPN_SendPod",
-                            "enabled": true,
-                            "assignments": [
-                                {"name": "InflightDirection", "value": "OUTBOUND"},
-                                {"name": "SourceSenderID", "value": Sender_both},
-                                {"name": "Action", "value": "ROUTER"},
-                                {
-                                    "name": "ProcessingFlag1",
-                                    "value": ProcessingFlag1_OB,
-                                },
-                                {"name": "MessageType", "value": Message_both},
-                                {"name": "BusinessAlias", "value": "OSC_DEMO"},
-                                {"name": "TargetSystemID", "value": "TX01"},
-                                {
-                                    "name": "SourceReceiverID",
-                                    "value": Receiver_both,
-                                },
-                            ],
-                        },
-                    ],
-                },
-                {
-                    "name": name2_Outbound_both,
-                    "businessAlias": "OSC_DEMO",
-                    "ruleBusinessAlias": "OSC_DEMO",
-                    "ruleSet": "BPN_RouterEval",
-                    "enabled": true,
-                    "default": false,
-                    "direction": "OUTBOUND",
-                    "conditions": [
-                        {
-                            "name": "ProcessingFlag1",
-                            "operator": "=",
-                            "value": "ProcessingFlag1_both",
-                        }
-                    ],
-                    "actions": [
-                        {
-                            "name": "Action2",
-                            "businessProcessName": "BPN_Finish",
-                            "enabled": false,
-                            "assignments": [],
-                        },
-                        {
-                            "name": "SendToPod",
-                            "businessProcessName": "BPN_SendPod",
-                            "enabled": true,
-                            "assignments": [
-                                {"name": "Category", "value": "SFTP"},
-                                {"name": "Action", "value": "SEND"},
-                                {"name": "TargetSystemID", "value": "PRO01"},
-                                {
-                                    "name": "ProtocolProfileID",
-                                    "value": Outbound_ProfileID_both,
-                                },
-                                {"name": "InflightDirection", "value": "OUTBOUND"},
-                                {"name": "BusinessAlias", "value": "OSC_DEMO"},
-                            ],
-                        },
-                    ],
-                },
-            ],
-        }
-        return {"message": message}
+    @property
+    def driver(self):
+        return self._driver
 
 
-def process_edit_inbound_basictx():
-    RuleType = dict['RuleType']
-    Port = 443
-    true = 'true'
-    false = 'false'
-    message = 'Rule Edited Successfully'
-    if RuleType == "Edit Inbound Basictx":
-        ruleName = dict["ruleName"]
-        Keyword = dict['Keyword']
-        tradingpartner_Basictx__Inbound_Edit = dict["tradingpartner_Basictx__Inbound_Edit"]
-        ProfileID_Basictx_Inbound_Edit = dict["ProfileID_Basictx_Inbound_Edit"]
-        ProcessingFlag1_Basictx_Inbound_Edit = dict["ProcessingFlag1_Basictx_Inbound_Edit"]
-        name1_BasicTx = "1.0.0_ELUX_INBOUND_RECEIVE_FROM_" + tradingpartner_Basictx__Inbound_Edit + "_SFTP_TO_BASICTX"
-        name2_BasicTx = "1.0.2_ELUX_GENERIC_IN_FLAT_FILE_" + ProcessingFlag1_Basictx_Inbound_Edit + "_BASICTX_TO_CC_FINISH"
-        Return_Name = name1_BasicTx + name2_BasicTx + "edited successfully"
-        id_name = "ELUX_INBOUND_RECEIVE_FROM_" + tradingpartner_Basictx__Inbound_Edit
-
-      
-        data_edit_inbound_basictx ={
-            "_id": id_name,
-            "host": "nabpnsupporttool.comm1.sci.local",
-            "port": 443,
-            "outputFolder": "P:\\RPA\\BPNST",
-            "disableAll": true,
-            "checkForDuplicateRules": true,
-            "skipRules": [],
-            "rules": [
-                {
-                    "name": name1_BasicTx,
-                    "businessAlias": "OSC_DEMO",
-                    "ruleBusinessAlias": "OSC_DEMO",
-                    "ruleSet": "BPN_ReceiveSFTPEval",
-                    "enabled": true,
-                    "default": false,
-                    "direction": "INBOUND",
-                    "conditions": [
-                        {
-                            "name": "SourceSubject",
-                            "operator": "Contains",
-                            "value":  ProfileID_Basictx_Inbound_Edit,
-                        }
-                    ],
-                    "actions": [
-                        {
-                            "name": "TrackIt",
-                            "businessProcessName": "BPN_ReceiveSFTPTrack",
-                            "enabled": true,
-                            "assignments": [
-                                {"name": "InflightDirection", "value": "INBOUND"}
-                            ],
-                        },
-                        {
-                            "name": "SendToPod",
-                            "businessProcessName": "BPN_SendPod",
-                            "enabled": true,
-                            "assignments": [
-                                {"name": "InflightDirection", "value": "INBOUND"},
-                                {"name": "Action", "value": "TX"},
-                                {"name": "ProcessingFlag1", "value": ProcessingFlag1_Basictx_Inbound_Edit},
-                                {"name": "Category", "value": "BASIC"},
-                                {"name": "BusinessAlias", "value": "OSC_DEMO"},
-                                {"name": "TargetSystemID", "value": "TX01"},
-                                {
-                                    "name": "MapName",
-                                    "value": "ELUX_DUMMY_PASSTHRU_Fortras100_inhouse",
-                                },
-                            ],
-                        },
-                    ],
-                },
-                {
-                    "name": name2_BasicTx,
-                    "businessAlias": "OSC_DEMO",
-                    "ruleBusinessAlias": "OSC_DEMO",
-                    "ruleSet": "BPN_BasicTranslationEval",
-                    "enabled": true,
-                    "default": false,
-                    "direction": "",
-                    "conditions": [
-                        {
-                            "name": "ProcessingFlag1",
-                            "operator": "=",
-                            "value": ProcessingFlag1_Basictx_Inbound_Edit,
-                        }
-                    ],
-                    "actions": [
-                        {
-                            "name": "Action2",
-                            "businessProcessName": "BPN_CarbonCopy",
-                            "enabled": true,
-                            "assignments": [
-                                {"name": "CCv1Mode", "value": "TRUE"},
-                                {"name": "CarbonCopyRecipient", "value": "OSC_DEMO"},
-                                {"name": "CCNodesToKeep", "value": "SourceFileName"},
-                                {"name": "ProcessingFlag1", "value": ProcessingFlag1_Basictx_Inbound_Edit},
-                            ],
-                        },
-                        {
-                            "name": "Action3",
-                            "businessProcessName": "BPN_Finish",
-                            "enabled": true,
-                            "assignments": [],
-                        },
-                    ],
-                },
-            ],
-        }
-    return {"message": message}
-    
-def process_edit_outbound_basictx():
-    RuleType = dict['RuleType']
-    
-    if RuleType == "Edit Outbound Basictx":
-        Port = 443
-        true = 'true'
-        false = 'false'
-        message ='Rule Edited Successfully'
-        rulename = dict["rulename"]
-        Keyword = dict['Keyword']
-        tradingpartner_Basictx = dict["tradingpartner_Basictx"]
-        Profileid_Basictx = dict["Profileid_Basictx"]
-        ProcessingFlag1_Basictx = dict["ProcessingFlag1_Basictx"]
-        name1_BasicTx = "1.0.0_ELUX_INBOUND_RECEIVE_FROM_" + tradingpartner_Basictx + "_SFTP_TO_BASICTX"
-        name2_BasicTx = "1.0.2_ELUX_GENERIC_IN_FLAT_FILE_" + ProcessingFlag1_Basictx + "_BASICTX_TO_CC_FINISH"
-        Return_Name = name1_BasicTx + name2_BasicTx + "edited successfully"
-        id_name = "ELUX_INBOUND_RECEIVE_FROM_" + tradingpartner_Basictx
+def get_nodes_by_id_name(tx, id_name):
+    query = (
+        "MATCH (r:Rule) "
+        "WHERE r.id_name = $id_name "
+        "RETURN r"
+    )
+    result = []
+    for record in tx.run(query, id_name=id_name):
+        result.append(record["node"])
+    return result
 
 
-        data_edit_outbound_basictx ={
-            "_id": id_name,
-            "host": "nabpnsupporttool.comm1.sci.local",
-            "port": 443,
-            "outputFolder": "P:\\RPA\\BPNST",
-            "disableAll": true,
-            "checkForDuplicateRules": true,
-            "skipRules": [],
-            "rules": [
-                {
-                    "name": name1_BasicTx,
-                    "businessAlias": "OSC_DEMO",
-                    "ruleBusinessAlias": "OSC_DEMO",
-                    "ruleSet": "BPN_ReceiveSFTPEval",
-                    "enabled": true,
-                    "default": false,
-                    "direction": "INBOUND",
-                    "conditions": [
-                        {
-                            "name": "SourceSubject",
-                            "operator": "Contains",
-                            "value": Profileid_Basictx,
-                        }
-                    ],
-                    "actions": [
-                        {
-                            "name": "TrackIt",
-                            "businessProcessName": "BPN_ReceiveSFTPTrack",
-                            "enabled": true,
-                            "assignments": [
-                                {"name": "InflightDirection", "value": "INBOUND"}
-                            ],
-                        },
-                        {
-                            "name": "SendToPod",
-                            "businessProcessName": "BPN_SendPod",
-                            "enabled": true,
-                            "assignments": [
-                                {"name": "InflightDirection", "value": "INBOUND"},
-                                {"name": "Action", "value": "TX"},
-                                {"name": "ProcessingFlag1", "value": ProcessingFlag1_Basictx},
-                                {"name": "Category", "value": "BASIC"},
-                                {"name": "BusinessAlias", "value": "OSC_DEMO"},
-                                {"name": "TargetSystemID", "value": "TX01"},
-                                {
-                                    "name": "MapName",
-                                    "value": "ELUX_DUMMY_PASSTHRU_Fortras100_inhouse",
-                                },
-                            ],
-                        },
-                    ],
-                },
-                {
-                    "name": name2_BasicTx,
-                    "businessAlias": "OSC_DEMO",
-                    "ruleBusinessAlias": "OSC_DEMO",
-                    "ruleSet": "BPN_BasicTranslationEval",
-                    "enabled": true,
-                    "default": false,
-                    "direction": "",
-                    "conditions": [
-                        {
-                            "name": "ProcessingFlag1",
-                            "operator": "=",
-                            "value": ProcessingFlag1_Basictx,
-                        }
-                    ],
-                    "actions": [
-                        {
-                            "name": "Action2",
-                            "businessProcessName": "BPN_CarbonCopy",
-                            "enabled": true,
-                            "assignments": [
-                                {"name": "CCv1Mode", "value": "TRUE"},
-                                {"name": "CarbonCopyRecipient", "value": "OSC_DEMO"},
-                                {"name": "CCNodesToKeep", "value": "SourceFileName"},
-                                {"name": "ProcessingFlag1", "value": ProcessingFlag1_Basictx},
-                            ],
-                        },
-                        {
-                            "name": "Action3",
-                            "businessProcessName": "BPN_Finish",
-                            "enabled": true,
-                            "assignments": [],
-                        },
-                    ],
-                },
-            ],
-        }
+def create_inbound_rule(connector, profileid, sender, receiver, message, processingflag1, ruletype):
+    id_name = receiver + '_inBOUND_' + sender
+    name1_inbound = receiver + '_inBOUND_' + sender + '_SFTP_STEP1'
+    return_name = name1_inbound + '& SFTP_STEP2 created successfully'
 
-    return {"message": message}
-  
+    query = (
+        "CREATE (r:Rule {sender: $sender, receiver: $receiver, "
+        "message: $message, profileid: $profileid, ruletype: $ruletype, "
+        "processingflag1: $processingflag1,id_name:$id_name})"
+    )
 
-def process_rule_search():
-    RuleType = dict['RuleType']
-    
-    if RuleType == "Rule search":
-        ruleName = dict["ruleName"]
-        selector = {"_id": ruleName}
-        filename = f"{ruleName}.json"
-        print(selector)
-        message = 'Rule Search Successful'
+    with connector._driver.session() as session:
+        session.write_transaction(lambda tx: tx.run(query, sender=sender, receiver=receiver,
+                                                    message=message, profileid=profileid,
+                                                    ruletype=ruletype, processingflag1=processingflag1,
+                                                    id_name=id_name))
+        return return_name
 
-        data_rule_search = {
-            'RuleName': ruleName,
-            'Selector': selector,
-            'Filename': filename,
-            'Return_Name': Return_Name
-        }
 
-        return {"message": message}
+def create_outbound_rule(connector, profileid_outbound, sender_outbound, receiver_outbound,
+                         message_outbound, processingflag1_outbound, filename_output):
+    id_name = receiver_outbound + '_outbound_' + sender_outbound
+    name1_outbound = receiver_outbound + '_Outbound_' + sender_outbound + '_SFTP_STEP1'
+    return_name = name1_outbound + '& SFTP_STEP2 created successfully'
+    query = (
+        "CREATE (r:Rule {sender_outbound: $sender_outbound, receiver_outbound: $receiver_outbound, "
+        "message_outbound: $message_outbound, profileid_outbound: $profileid_outbound, "
+        "filename_output: $filename_output, "
+        "processingflag1_outbound: $processingflag1_outbound,id_name:$id_name})"
+    )
+
+    with connector._driver.session() as session:
+        session.write_transaction(
+            lambda tx: tx.run(query, sender_outbound=sender_outbound, receiver_outbound=receiver_outbound,
+                              message_outbound=message_outbound, profileid_outbound=profileid_outbound,
+                              filename_output=filename_output, processingflag1_outbound=processingflag1_outbound,
+                              id_name=id_name))
+        return return_name
+
+
+def create_both_rule(connector, inbound_profileid_both, outbound_profileid_both, sender_both, receiver_both,
+                     message_both, processingflag1_both, filename_both):
+    id_name = receiver_both + '_Both_' + sender_both
+    return_name = receiver_both + 'both' + sender_both + 'SFTP_STEP1,SFTP_STEP2 created successfully'
+    query = (
+        "CREATE (r:Rule {sender_both: $sender_both, receiver_both: $receiver_both, "
+        "message_both: $message_both, "
+        "inbound_profileid_both: $inbound_profileid_both, outbound_profileid_both: $outbound_profileid, "
+        "processingflag1_both: $processingflag1_both, filename_both: $filename_both,id_name:$id_name})"
+    )
+
+    with connector._driver.session() as session:
+        session.write_transaction(lambda tx: tx.run(query, sender_both=sender_both, receiver_both=receiver_both,
+                                                    message=message_both, inbound_profileid=inbound_profileid_both,
+                                                    outbound_profileid_both=outbound_profileid_both,
+                                                    processingflag1_both=processingflag1_both,
+                                                    filename=filename_both, id_name=id_name))
+        return return_name
+
+
+def create_inbound_basictx_rule(connector, tradingpartner_basictx, profileid_basictx, processingflag1_basictx, id_name):
+    name1_basictx = "1.0.0_ELUX_INBOUND_RECEIVE_FROM_" + tradingpartner_basictx + "_SFTP_TO_BASICTX"
+    name2_basictx = "1.0.2_ELUX_GENERIC_IN_FLAT_FILE_" + processingflag1_basictx + "_BASICTX_TO_CC_FINISH"
+    return_name = name1_basictx + name2_basictx + "created successfully"
+    query = (
+        "CREATE (r:Rule {TradingPartner: $tradingpartner_basictx, profileid: $profileid_basictx, "
+        "processingflag1_basictx: $processingflag1_basictx,id_name:$id_name})"
+    )
+
+    with connector._driver.session() as session:
+        session.write_transaction(lambda tx: tx.run(query, tradingpartner_basictx=tradingpartner_basictx,
+                                                    profileid_basictx=profileid_basictx,
+                                                    processingflag1_basictx=processingflag1_basictx, id_name=id_name))
+    return return_name
+
+
+def create_outbound_basictx_rule(connector, tradingpartner_basictx, profileid_basictx, processingflag1_basictx,
+                                 id_name):
+    name1_basictx = "1.0.0_ELUX_OUTBOUND_RECEIVE_FROM_" + tradingpartner_basictx + "_SFTP_TO_BASICTX"
+    name2_basictx = "1.0.2_ELUX_GENERIC_IN_FLAT_FILE_" + processingflag1_basictx + "_BASICTX_TO_CC_FINISH"
+    return_name = name1_basictx + name2_basictx + "created successfully"
+    query = (
+        "CREATE (r:Rule {TradingPartner: $tradingpartner_basictx, profileid: $profileid_basictx, "
+        "processingflag1: $processingflag1_basictx,id_name:$id_name})"
+    )
+    with connector._driver.session() as session:
+        session.write_transaction(lambda tx: tx.run(query, tradingpartner_basictx=tradingpartner_basictx,
+                                                    profileid_basictx=profileid_basictx,
+                                                    processingflag1_basictx=processingflag1_basictx, id_name=id_name))
+        return return_name
+
+
+def edit_inbound_rule(connector, new_profile_id, new_message, new_processingflag1):
+    s_id = dict["s_id"]
+    return_name = 'Rule Edit Successfully'
+    query = (
+        "MATCH (r:Rule) WHERE r.id_name = $s_id "
+        "SET r.profileid = $new_profile_id, "
+        "    r.message = $new_message, "
+        "    r.processingflag1 = $new_processingflag1 "
+    )
+    with connector._driver.session() as session:
+        session.write_transaction(lambda tx: tx.run(query, new_profile_id=new_profile_id,
+                                                    new_message=new_message, new_processingflag1=new_processingflag1,
+                                                    s_id=s_id))
+    return return_name
+
+
+def edit_outbound_rule(connector, new_profile_id, new_message, new_processing_flag, new_filename):
+    s_id = dict["s_id"]
+    return_name = 'Rule Edit Successfully'
+    query = (
+        "MATCH (r:Rule) WHERE r.id_name = $id_name "
+        "SET r.profileid_outbound = $new_profile_id, "
+        "    r.message_outbound = $new_message, "
+        "    r.processingflag1_outbound = $new_processing_flag, "
+        "    r.filename_output = $new_filename"
+    )
+    with connector._driver.session() as session:
+        session.write_transaction(lambda tx: tx.run(query, return_name=return_name, new_profile_id=new_profile_id,
+                                                    new_message=new_message, new_processing_flag=new_processing_flag,
+                                                    new_filename=new_filename, s_id_name=s_id))
+    return return_name
+
+
+def edit_both_rule(connector, new_inbound_profile_id, new_outbound_profile_id, new_message,
+                   new_processing_flag,
+                   new_filename):
+    s_id = dict["s_id"]
+    return_name = 'Rule Edit Successfully'
+    query = (
+        "MATCH (r:Rule) WHERE r.id_name = $s_id "
+        "SET r.inbound_profileid_both = $new_inbound_profile_id, "
+        "    r.outbound_profileid_both = $new_outbound_profile_id, "
+        "    r.message_both = $new_message, "
+        "    r.processingflag1_both= $new_processing_flag, "
+        "    r.filename_both = $new_filename"
+    )
+    with connector._driver.session() as session:
+        session.write_transaction(lambda tx: tx.run(query, new_inbound_profile_id=new_inbound_profile_id,
+                                                    new_outbound_profile_id=new_outbound_profile_id,
+                                                    new_message=new_message,
+                                                    new_processing_flag=new_processing_flag, new_filename=new_filename,
+                                                    s_id_=s_id))
+
+    return return_name
+
+
+def edit_inbound_basictx_rule(connector, new_tradingpartner, new_profile_id, new_processing_flag):
+    s_id = dict["s_id"]
+    return_name = 'Rule Edit Successfully'
+    query = (
+        "MATCH (r:Rule) WHERE r.id_name = $s_id "
+        "SET r.tradingpartner = $new_tradingpartner, "
+        "    r.profile_id = $new_profile_id, "
+        "    r.processing_flag = $new_processing_flag"
+    )
+    with connector._driver.session() as session:
+        session.write_transaction(lambda tx: tx.run
+                                  .run(query, new_tradingpartner=new_tradingpartner, new_profile_id=new_profile_id,
+                                       new_processing_flag=new_processing_flag, s_id=s_id))
+
+    return return_name
+
+
+def edit_outbound_basictx_rule(connector, new_tradingpartner, new_profile_id, new_processing_flag):
+    s_id = dict["s_id"]
+    return_name = 'Rule Edit Successfully'
+    query = (
+        "MATCH (r:Rule) WHERE r.id_name = $s_id "
+        "SET r.tradingpartner_basictx = $new_tradingpartner, "
+        "    r.profileid_basictx = $new_profile_id, "
+        "    r.processingflag1_basictx = $new_processing_flag"
+    )
+
+    with connector._driver.session() as session:
+        session.write_transaction(lambda tx: tx.run
+                                  .run(query, return_name=return_name, new_tradingpartner=new_tradingpartner,
+                                       new_profile_id=new_profile_id, new_processing_flag=new_processing_flag,
+                                       s_id=s_id))
+
+    return return_name
+
+
+def main(dict):
+    uri = "bolt://localhost:7687"
+    user = "admin"
+    password = "password"
+    connector = Neo4jConnector(uri, user, password)
+    ruletype = dict['ruletype']
+    # Initialize a dictionary to store the result
+
+    if ruletype == 'Inbound':
+        profileid = dict['profile_id']
+        sender = dict['sender']
+        receiver = dict['receiver']
+        message = dict['message']
+        processingflag1 = dict['processingflag1']
+        create_inbound_rule(connector, profileid, sender, receiver, message, processingflag1, ruletype)
+
+    elif ruletype == 'Outbound':
+        profileid_outbound = dict['profileid_outbound']
+        sender_outbound = dict['sender_outbound']
+        receiver_outbound = dict['receiver_outbound']
+        message_outbound = dict['message_outbound']
+        processingflag1_outbound = dict['processingflag1_outbound']
+        filename_output = dict['filename_output']
+
+        create_outbound_rule(connector, profileid_outbound, sender_outbound, receiver_outbound,
+                             message_outbound, processingflag1_outbound, filename_output)
+    elif ruletype == 'Both':
+        inbound_profileid_both = dict['inbound_profileid_both']
+        outbound_profileid_both = dict['outbound_profile_id_both']
+        sender_both = dict['sender_both']
+        receiver_both = dict['receiver_both']
+        message_both = dict['message_both']
+        processingflag1_both = dict['processingflag1_both']
+
+        filename_both = dict['filename_both']
+
+        create_both_rule(connector, inbound_profileid_both, outbound_profileid_both, sender_both,
+                         receiver_both, message_both, processingflag1_both, filename_both)
+
+    elif ruletype == 'Inbound BasicTx':
+        tradingpartner_basictx = dict["tradingpartner_Basictx"]
+        profileid_basictx = dict["profileid_Basictx"]
+        processingflag1_basictx = dict["ProcessingFlag1_Basictx"]
+        id_name = "ELUX_INBOUND_RECEIVE_FROM_" + tradingpartner_basictx
+        create_inbound_basictx_rule(connector, tradingpartner_basictx, profileid_basictx,
+                                    processingflag1_basictx, id_name)
+    elif ruletype == 'Outbound BasicTx':
+        tradingpartner_basictx = dict["tradingpartner_basictx"]
+        profileid_basictx = dict["profile_id_basictx"]
+        processingflag1_basictx = dict["processingflag1_basictx"]
+        id_name = "ELUX_INBOUND_RECEIVE_FROM_" + tradingpartner_basictx
+        create_outbound_basictx_rule(connector, tradingpartner_basictx, profileid_basictx,
+                                     processingflag1_basictx, id_name)
+    elif ruletype == 'Edit Inbound Rule':
+
+        new_message = dict["new_message"]
+        new_profile_id = dict["new_profile_id"]
+        new_processing_flag = dict["new_processing_flag"]
+
+        edit_inbound_rule(connector, new_profile_id, new_message, new_processing_flag)
+
+    elif ruletype == 'Edit Outbound Rule':
+
+        new_profile_id = dict["new_profile_id"]
+        new_message = dict["new_message"]
+        new_processing_flag = dict["new_processing_flag"]
+        new_filename = dict["new_filename"]
+        edit_outbound_rule(connector, new_profile_id, new_message, new_processing_flag, new_filename)
+
+    elif ruletype == 'Edit Both Rule':
+
+        new_inbound_profile_id = dict["new_inbound_profile_id"]
+        new_outbound_profile_id = dict["new_outbound_profile_id"]
+        new_filename = dict['new_filename']
+        new_message = dict["Message_edit_Both"]
+        new_processing_flag = dict["new_processing_flag"]
+        edit_both_rule(connector, new_inbound_profile_id, new_outbound_profile_id, new_message,
+                       new_processing_flag, new_filename)
+    elif ruletype == 'Edit Inbound BasicTx':
+
+        new_tradingpartner = dict["new_tradingpartner"]
+        new_profile_id = dict["new_profile_id"]
+        new_processing_flag = dict["new_processing_flag"]
+        edit_inbound_basictx_rule(connector, new_tradingpartner, new_profile_id, new_processing_flag)
+
+    elif ruletype == 'Edit Outbound BasicTx':
+        new_tradingpartner = dict["new_tradingpartner"]
+        new_profile_id = dict["new_profile_id"]
+        new_processing_flag = dict["new_processing_flag"]
+        edit_outbound_basictx_rule(connector, new_tradingpartner, new_profile_id, new_processing_flag)
+    elif ruletype == 'Rule Search':
+        s_id = dict['s_id']
+        query = (
+            "MATCH (r:Rule) "
+            "WHERE r.id_name = $s_id "
+            "RETURN r"
+        )
+        result = []
+
+        with connector._driver.session() as session:
+            def search_rule_transaction(tx):
+                for record in tx.run(query, s_id=s_id):
+                    result.append(record["node"])
+
+            session.write_transaction(search_rule_transaction)
+
+        return result
     else:
-        return {"error": "Invalid RuleType"}
-
-def main():
-    RuleType = dict['RuleType']
-
-    if RuleType == 'Inbound':
-        result = process_inbound_dict()
-    elif RuleType == 'Outbound':
-        result = process_outbound_dict()
-    elif RuleType == 'Both':
-        result = process_both_dict()
-    elif RuleType == 'Inbound BasicTx':
-        result = process_basictx_inbound_dict()
-    elif RuleType == 'Outbound BasicTx':
-        result = process_basictx_outbound_dict()
-    elif RuleType == 'Rule edit':
-        result = process_rule_edit()
-    elif RuleType == 'Edit Inbound Rule':
-        result = process_edit_inbound()
-    elif RuleType == 'Edit Outbound Rule':
-        result = process_edit_outbound()
-    elif RuleType == 'Edit Both Rule':
-        result = process_edit_both()
-    elif RuleType == 'Edit Inbound Basictx':
-        result = process_edit_inbound_basictx()
-    elif RuleType == 'Edit Outbound Basictx':
-        result = process_edit_outbound_basictx()
-    elif RuleType == 'Rule search':
-        result = process_rule_search()
-    else:
-        print(f"Invalid RuleType: {RuleType}")
-
-    if result:
-        print(result)
+        print(f"Unsupported ruletype: {ruletype}")
+    connector.close()
